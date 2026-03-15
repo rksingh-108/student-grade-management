@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Grade Management System</title>
+    <style>
+        /* ===== CSS3: VARIABLES, RESET, RESPONSIVE DESIGN ===== */
+        :root {
+            --primary: #3b82f6;
+            --secondary: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --border: #e5e7eb;
+            --text: #111827;
+            --text-light: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        /* ===== LAYOUT & STRUCTURE ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* ===== NAVIGATION ===== */
+        nav {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        nav button {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid transparent;
+            background: transparent;
+            color: var(--text-light);
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        nav button:hover {
+            color: var(--primary);
+            background: var(--light);
+        }
+
+        nav button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ===== SECTIONS ===== */
+        section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        /* ===== GRIDS ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-box .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-box .label {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* ===== FORMS ===== */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* ===== BUTTONS ===== */
+        button {
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* ===== TABLES ===== */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--light);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            border-bottom: 2px solid var(--border);
+            color: var(--text);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr:hover {
+            background: var(--light);
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* ===== PROGRESS BARS ===== */
+        .progress-bar {
+            background: var(--light);
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            nav {
+                flex-direction: column;
+            }
+
+            nav button {
+                width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 0.75rem;
+            }
+        }
+
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ===== HEADER ===== -->
+        <header>
+            <h1>📚 Student Grade Management</h1>
+            <p>Track, analyze, and manage your academic performance</p>
+        </header>
+
+        <!-- ===== NAVIGATION ===== -->
+        <nav>
+            <button class="nav-btn active" data-section="dashboard">Dashboard</button>
+            <button class="nav-btn" data-section="add-grade">Add Grade</button>
+            <button class="nav-btn" data-section="analytics">Analytics</button>
+            <button class="nav-btn" data-section="settings">Settings</button>
+        </nav>
+
+        <!-- ===== DASHBOARD SECTION ===== -->
+        <section id="dashboard" class="active">
+            <div class="card">
+                <h2>📊 Dashboard Overview</h2>
+                <div class="grid">
+                    <div class="stat-box">
+                        <div class="number" id="gpaDisplay">0.00</div>
+                        <div class="label">Current GPA</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number" id="subjectsCount">0</div>
+                        <div class="label">Total Subjects</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number" id="avgGradeDisplay">0</div>
+                        <div class="label">Average Grade</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number" id="creditsDisplay">0</div>
+                        <div class="label">Total Credits</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📋 Recent Grades</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Credits</th>
+                                <th>Points</th>
+                                <th>Letter</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gradesTableBody">
+                            <tr class="empty-message">
+                                <td colspan="6">No grades added yet. Start by adding your first grade!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📈 Grade Distribution</h2>
+                <div id="distributionChart">
+                    <p class="empty-message">Add grades to see distribution</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ADD GRADE SECTION ===== -->
+        <section id="add-grade">
+            <div class="card">
+                <h2>➕ Add New Grade</h2>
+                <form id="gradeForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="semester">Semester</label>
+                            <select id="semester" required>
+                                <option value="">Select Semester</option>
+                                <option value="Fall 2024">Fall 2024</option>
+                                <option value="Spring 2025">Spring 2025</option>
+                                <option value="Summer 2025">Summer 2025</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Subject Name</label>
+                            <input type="text" id="subject" placeholder="e.g., Data Structures" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="credits">Credit Hours (1-6)</label>
+                            <input type="number" id="credits" min="1" max="6" value="3" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="gradePoints">Grade Points (0-4.0)</label>
+                            <input type="number" id="gradePoints" min="0" max="4" step="0.01" placeholder="3.5" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gradeDate">Date Completed</label>
+                            <input type="date" id="gradeDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Notes (Optional)</label>
+                            <input type="text" id="notes" placeholder="Add optional notes...">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Add Grade</button>
+                        <button type="reset" class="btn" style="background: var(--light); color: var(--text);">Clear Form</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ===== ANALYTICS SECTION ===== -->
+        <section id="analytics">
+            <div class="card">
+                <h2>📊 Performance Analytics</h2>
+                <div class="grid">
+                    <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+                        <h3 style="margin-bottom: 1rem;">Highest Grade</h3>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--success);" id="highestGrade">--</div>
+                    </div>
+                    <div style="background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+                        <h3 style="margin-bottom: 1rem;">Lowest Grade</h3>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--danger);" id="lowestGrade">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📈 Semester Progress</h2>
+                <div id="semesterProgress">
+                    <p class="empty-message">Add grades to see semester progress</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>💾 Data Management</h2>
+                <div class="form-actions">
+                    <button class="btn btn-primary" onclick="app.exportJSON()">📥 Export JSON</button>
+                    <button class="btn btn-primary" onclick="app.exportCSV()">📊 Export CSV</button>
+                    <button class="btn btn-danger" onclick="app.clearAllData()">🗑️ Clear All</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SETTINGS SECTION ===== -->
+        <section id="settings">
+            <div class="card">
+                <h2>⚙️ Application Settings</h2>
+                
+                <div class="form-group">
+                    <label for="gradeScale">Grade Scale</label>
+                    <select id="gradeScale">
+                        <option value="4.0">4.0 Scale (Standard)</option>
+                        <option value="5.0">5.0 Scale</option>
+                        <option value="100">100 Point Scale</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="theme">Theme</label>
+                    <select id="theme">
+                        <option value="light">Light Mode</option>
+                        <option value="dark">Dark Mode</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 2rem; padding: 1.5rem; background: var(--light); border-radius: 8px;">
+                    <h3>ℹ️ About This Application</h3>
+                    <p style="margin-top: 1rem; line-height: 1.8;">
+                        <strong>Version:</strong> 1.0.0<br>
+                        <strong>Technologies:</strong> HTML5, CSS3, JavaScript, JSON, Local Storage<br>
+                        <strong>Purpose:</strong> Help students track and manage academic grades effectively<br>
+                        <strong>Data:</strong> Stored locally in your browser (no server)<br>
+                        <strong>Skills Demonstrated:</strong> Frontend development, OOP, REST API concepts, data management, responsive design
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== FOOTER ===== -->
+        <footer>
+            <p>&copy; 2025 Student Grade Management System | Built with HTML5, CSS3, JavaScript</p>
+        </footer>
+    </div>
+
+    <!-- ===== JAVASCRIPT: OOP, VALIDATION, DATA MANAGEMENT ===== -->
+    <script>
+        // ===== GRADE CLASS (OOP - Object Oriented Programming) =====
+        class Grade {
+            constructor(id, semester, subject, credits, points, date, notes = '') {
+                this.id = id;
+                this.semester = semester;
+                this.subject = subject;
+                this.credits = parseFloat(credits);
+                this.points = parseFloat(points);
+                this.date = date;
+                this.notes = notes;
+            }
+
+            // Calculate quality points
+            getQualityPoints() {
+                return this.credits * this.points;
+            }
+
+            // Convert points to letter grade
+            getLetterGrade() {
+                if (this.points >= 3.75) return 'A';
+                if (this.points >= 3.25) return 'A-';
+                if (this.points >= 2.75) return 'B+';
+                if (this.points >= 2.25) return 'B';
+                if (this.points >= 1.75) return 'B-';
+                if (this.points >= 1.25) return 'C+';
+                if (this.points >= 0.75) return 'C';
+                return 'F';
+            }
+
+            // Convert to JSON object
+            toJSON() {
+                return {
+                    id: this.id,
+                    semester: this.semester,
+                    subject: this.subject,
+                    credits: this.credits,
+                    points: this.points,
+                    date: this.date,
+                    notes: this.notes
+                };
+            }
+        }
+
+        // ===== GRADE MANAGER CLASS (Data Management) =====
+        class GradeManager {
+            constructor() {
+                this.grades = [];
+                this.loadFromStorage();
+            }
+
+            // Input validation (Exception Handling)
+            validateGrade(semester, subject, credits, points, date) {
+                if (!semester || !subject || !credits || points === '' || !date) {
+                    throw new Error('All fields are required');
+                }
+                
+                const c = parseFloat(credits);
+                const p = parseFloat(points);
+
+                if (c < 1 || c > 6) {
+                    throw new Error('Credits must be between 1 and 6');
+                }
+                
+                if (p < 0 || p > 4) {
+                    throw new Error('Grade points must be between 0 and 4');
+                }
+
+                return true;
+            }
+
+            // Add grade with validation
+            addGrade(semester, subject, credits, points, date, notes) {
+                this.validateGrade(semester, subject, credits, points, date);
+                
+                const grade = new Grade(
+                    Date.now(),
+                    semester,
+                    subject,
+                    credits,
+                    points,
+                    date,
+                    notes
+                );
+
+                this.grades.push(grade);
+                this.saveToStorage();
+                return grade;
+            }
+
+            // Delete grade
+            deleteGrade(id) {
+                this.grades = this.grades.filter(g => g.id !== id);
+                this.saveToStorage();
+            }
+
+            // Calculate GPA
+            calculateGPA() {
+                if (this.grades.length === 0) return 0;
+
+                let totalQuality = 0;
+                let totalCredits = 0;
+
+                this.grades.forEach(grade => {
+                    totalQuality += grade.getQualityPoints();
+                    totalCredits += grade.credits;
+                });
+
+                return totalCredits === 0 ? 0 : (totalQuality / totalCredits).toFixed(2);
+            }
+
+            // Calculate average points
+            calculateAverage() {
+                if (this.grades.length === 0) return 0;
+                const sum = this.grades.reduce((acc, g) => acc + g.points, 0);
+                return (sum / this.grades.length).toFixed(2);
+            }
+
+            // Get total credits
+            getTotalCredits() {
+                return this.grades.reduce((sum, g) => sum + g.credits, 0);
+            }
+
+            // Get grade distribution
+            getDistribution() {
+                const dist = { 'A': 0, 'B': 0, 'C': 0, 'F': 0 };
+                this.grades.forEach(g => {
+                    const letter = g.getLetterGrade()[0];
+                    if (dist.hasOwnProperty(letter)) dist[letter]++;
+                });
+                return dist;
+            }
+
+            // Get highest and lowest grades
+            getHighest() {
+                return this.grades.length === 0 ? null : 
+                    Math.max(...this.grades.map(g => g.points)).toFixed(2);
+            }
+
+            getLowest() {
+                return this.grades.length === 0 ? null : 
+                    Math.min(...this.grades.map(g => g.points)).toFixed(2);
+            }
+
+            // Get semester stats
+            getSemesterStats() {
+                const stats = {};
+                
+                this.grades.forEach(grade => {
+                    if (!stats[grade.semester]) {
+                        stats[grade.semester] = { totalQuality: 0, totalCredits: 0 };
+                    }
+                    stats[grade.semester].totalQuality += grade.getQualityPoints();
+                    stats[grade.semester].totalCredits += grade.credits;
+                });
+
+                Object.keys(stats).forEach(sem => {
+                    const credits = stats[sem].totalCredits;
+                    stats[sem].gpa = credits === 0 ? 0 : 
+                        (stats[sem].totalQuality / credits).toFixed(2);
+                });
+
+                return stats;
+            }
+
+            // Local Storage - JSON serialization (REST API concepts)
+            saveToStorage() {
+                try {
+                    const data = JSON.stringify(this.grades.map(g => g.toJSON()));
+                    localStorage.setItem('gradingData', data);
+                    console.log('Data saved successfully');
+                } catch (error) {
+                    console.error('Error saving:', error);
+                }
+            }
+
+            loadFromStorage() {
+                try {
+                    const data = localStorage.getItem('gradingData');
+                    if (data) {
+                        const parsed = JSON.parse(data);
+                        this.grades = parsed.map(g => 
+                            new Grade(g.id, g.semester, g.subject, g.credits, g.points, g.date, g.notes)
+                        );
+                    }
+                } catch (error) {
+                    console.error('Error loading:', error);
+                }
+            }
+
+            clearAll() {
+                if (confirm('Are you sure? This cannot be undone.')) {
+                    this.grades = [];
+                    this.saveToStorage();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        // ===== UI CONTROLLER (DOM Manipulation) =====
+        class UIController {
+            constructor() {
+                this.gradeManager = new GradeManager();
+                this.initListeners();
+                this.setDefaultDate();
+                this.updateDashboard();
+            }
+
+            initListeners() {
+                // Navigation
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.switchSection(e.target));
+                });
+
+                // Form submission
+                document.getElementById('gradeForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleAddGrade();
+                });
+            }
+
+            switchSection(button) {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+
+                document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+                const sectionId = button.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+            }
+
+            handleAddGrade() {
+                try {
+                    const semester = document.getElementById('semester').value;
+                    const subject = document.getElementById('subject').value;
+                    const credits = document.getElementById('credits').value;
+                    const points = document.getElementById('gradePoints').value;
+                    const date = document.getElementById('gradeDate').value;
+                    const notes = document.getElementById('notes').value;
+
+                    this.gradeManager.addGrade(semester, subject, credits, points, date, notes);
+
+                    document.getElementById('gradeForm').reset();
+                    this.setDefaultDate();
+                    this.updateDashboard();
+                    alert('Grade added successfully!');
+
+                    document.querySelectorAll('.nav-btn')[0].click();
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+
+            updateDashboard() {
+                // Update statistics
+                document.getElementById('gpaDisplay').textContent = 
+                    this.gradeManager.calculateGPA();
+                document.getElementById('subjectsCount').textContent = 
+                    this.gradeManager.grades.length;
+                document.getElementById('avgGradeDisplay').textContent = 
+                    this.gradeManager.calculateAverage();
+                document.getElementById('creditsDisplay').textContent = 
+                    this.gradeManager.getTotalCredits();
+
+                // Analytics
+                document.getElementById('highestGrade').textContent = 
+                    this.gradeManager.getHighest() || '--';
+                document.getElementById('lowestGrade').textContent = 
+                    this.gradeManager.getLowest() || '--';
+
+                this.renderGradesTable();
+                this.renderDistribution();
+                this.renderSemesterProgress();
+            }
+
+            renderGradesTable() {
+                const tbody = document.getElementById('gradesTableBody');
+                tbody.innerHTML = '';
+
+                if (this.gradeManager.grades.length === 0) {
+                    tbody.innerHTML = '<tr class="empty-message"><td colspan="6">No grades added yet</td></tr>';
+                    return;
+                }
+
+                const sorted = [...this.gradeManager.grades].sort((a, b) => 
+                    new Date(b.date) - new Date(a.date)
+                );
+
+                sorted.forEach(grade => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${grade.subject}</strong></td>
+                        <td>${grade.credits}</td>
+                        <td>${grade.points}</td>
+                        <td>${grade.getLetterGrade()}</td>
+                        <td>${grade.date}</td>
+                        <td><button class="btn-danger" onclick="app.deleteGrade(${grade.id})">Delete</button></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+
+            renderDistribution() {
+                const dist = this.gradeManager.getDistribution();
+                const container = document.getElementById('distributionChart');
+
+                if (this.gradeManager.grades.length === 0) {
+                    container.innerHTML = '<p class="empty-message">Add grades to see distribution</p>';
+                    return;
+                }
+
+                const total = Object.values(dist).reduce((a, b) => a + b, 0);
+                let html = '';
+
+                Object.entries(dist).forEach(([grade, count]) => {
+                    const percent = total === 0 ? 0 : Math.round((count / total) * 100);
+                    html += `
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <strong>${grade}</strong>
+                                <span>${count} (${percent}%)</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percent}%;"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            }
+
+            renderSemesterProgress() {
+                const stats = this.gradeManager.getSemesterStats();
+                const container = document.getElementById('semesterProgress');
+
+                if (Object.keys(stats).length === 0) {
+                    container.innerHTML = '<p class="empty-message">Add grades to see semester progress</p>';
+                    return;
+                }
+
+                let html = '';
+                Object.entries(stats).forEach(([sem, data]) => {
+                    const percent = (data.gpa / 4) * 100;
+                    html += `
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <strong>${sem}</strong>
+                                <span>GPA: ${data.gpa}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percent}%;"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+            }
+
+            deleteGrade(id) {
+                if (confirm('Delete this grade?')) {
+                    this.gradeManager.deleteGrade(id);
+                    this.updateDashboard();
+                }
+            }
+
+            setDefaultDate() {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('gradeDate').value = today;
+            }
+
+            exportJSON() {
+                try {
+                    const data = JSON.stringify(this.gradeManager.grades, null, 2);
+                    const blob = new Blob([data], { type: 'application/json' });
+                    this.downloadFile(blob, 'grades.json');
+                } catch (error) {
+                    alert('Export failed: ' + error.message);
+                }
+            }
+
+            exportCSV() {
+                try {
+                    let csv = 'Semester,Subject,Credits,Points,Letter,Date\n';
+                    this.gradeManager.grades.forEach(g => {
+                        csv += `${g.semester},"${g.subject}",${g.credits},${g.points},${g.getLetterGrade()},${g.date}\n`;
+                    });
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    this.downloadFile(blob, 'grades.csv');
+                } catch (error) {
+                    alert('Export failed: ' + error.message);
+                }
+            }
+
+            downloadFile(blob, filename) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                link.click();
+                URL.revokeObjectURL(url);
+            }
+
+            clearAllData() {
+                if (this.gradeManager.clearAll()) {
+                    this.updateDashboard();
+                    alert('All data cleared!');
+                }
+            }
+        }
+
+        // ===== INITIALIZE APPLICATION =====
+        let app;
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new UIController();
+            console.log('Application initialized successfully');
+        });
+    </script>
+</body>
+</html>
